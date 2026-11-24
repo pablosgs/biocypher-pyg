@@ -11,13 +11,9 @@ def example_records():
         NodeRecord("MONDO:1", "disease", {"name": "D1"}),
     ]
     edges = [
+        EdgeRecord("HGNC:1", "UP:P1", "gene", "protein", "encodes", {"source": "test"}),
         EdgeRecord(
-            "HGNC:1", "UP:P1", "gene", "protein", "encodes",
-            {"source": "test"}
-        ),
-        EdgeRecord(
-            "UP:P1", "MONDO:1", "protein", "disease",
-            "associated_with", {"score": 0.8}
+            "UP:P1", "MONDO:1", "protein", "disease", "associated_with", {"score": 0.8}
         ),
     ]
     return nodes, edges
@@ -40,17 +36,12 @@ def test_numeric_features_are_opt_in():
     result = BioCypherToPyG.from_records(
         nodes, edges, feature_config={"gene": ["score"]}
     ).convert()
-    assert torch.equal(
-        result.data["gene"].x,
-        torch.tensor([[1.0], [2.0]])
-    )
+    assert torch.equal(result.data["gene"].x, torch.tensor([[1.0], [2.0]]))
 
 
 def test_missing_edge_endpoint_fails():
     nodes, edges = example_records()
-    edges.append(
-        EdgeRecord("HGNC:MISSING", "UP:P1", "gene", "protein", "encodes")
-    )
+    edges.append(EdgeRecord("HGNC:MISSING", "UP:P1", "gene", "protein", "encodes"))
     try:
         BioCypherToPyG.from_records(nodes, edges).convert()
     except KeyError:

@@ -16,6 +16,4 @@ class SchemaMapper:
         return self.node_types.get(source_type, source_type.strip().lower())
 
     def map_relation_type(self, relation_type: str) -> str:
-        return self.relation_types.get(
-            relation_type, relation_type.strip().lower()
-        )
+        return self.relation_types.get(relation_type, relation_type.strip().lower())

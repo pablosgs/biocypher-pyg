@@ -46,7 +46,7 @@ class BioCypherToPyG:
         *,
         schema_mapper: SchemaMapper | None = None,
         feature_config: dict[str, list[str]] | None = None,
-    ) -> "BioCypherToPyG":
+    ) -> BioCypherToPyG:
         return cls(
             RecordsReader(nodes, edges),
             schema_mapper=schema_mapper,
@@ -72,9 +72,7 @@ class BioCypherToPyG:
                 target_id=e.target_id,
                 source_type=self.schema_mapper.map_node_type(e.source_type),
                 target_type=self.schema_mapper.map_node_type(e.target_type),
-                relation_type=self.schema_mapper.map_relation_type(
-                    e.relation_type
-                ),
+                relation_type=self.schema_mapper.map_relation_type(e.relation_type),
                 properties=dict(e.properties),
                 edge_id=e.edge_id,
             )
@@ -83,9 +81,7 @@ class BioCypherToPyG:
 
         mapper = NodeIdMapper().build(normalized_nodes)
         grouped_nodes = group_nodes(normalized_nodes, SchemaMapper())
-        grouped_edges = group_edges(
-            normalized_edges, SchemaMapper(), mapper
-        )
+        grouped_edges = group_edges(normalized_edges, SchemaMapper(), mapper)
 
         metadata = GraphMetadata(
             node_ids={
@@ -107,9 +103,7 @@ class BioCypherToPyG:
             conversion_config={"feature_config": self.feature_config},
         )
 
-        data = build_heterodata(
-            grouped_nodes, grouped_edges, self.feature_config
-        )
+        data = build_heterodata(grouped_nodes, grouped_edges, self.feature_config)
         errors = validate_heterodata(data, metadata)
 
         return ConversionResult(

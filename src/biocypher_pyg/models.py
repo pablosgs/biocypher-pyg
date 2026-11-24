@@ -36,8 +36,13 @@ class EdgeRecord:
     edge_id: str | None = None
 
     def __post_init__(self) -> None:
-        for name in ("source_id", "target_id", "source_type",
-                     "target_type", "relation_type"):
+        for name in (
+            "source_id",
+            "target_id",
+            "source_type",
+            "target_type",
+            "relation_type",
+        ):
             value = getattr(self, name)
             if not isinstance(value, str) or not value.strip():
                 raise ValueError(f"{name} must be a non-empty string")

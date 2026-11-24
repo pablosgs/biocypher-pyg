@@ -46,8 +46,6 @@ def load_graph(directory: str | Path, *, trusted: bool = False):
         )
     directory = Path(directory)
     data = torch.load(directory / "graph.pt", map_location="cpu", weights_only=False)
-    metadata = json.loads(
-        (directory / "metadata.json").read_text(encoding="utf-8")
-    )
+    metadata = json.loads((directory / "metadata.json").read_text(encoding="utf-8"))
     mapper = NodeIdMapper.from_dict(metadata["id_mapping"])
     return data, metadata, mapper

@@ -23,10 +23,12 @@ def group_edges(edges: list[EdgeRecord], schema_mapper, id_mapper):
 
         grouped[edge_type]["source"].append(source_index)
         grouped[edge_type]["target"].append(target_index)
-        grouped[edge_type]["properties"].append({
-            "edge_id": edge.edge_id,
-            **edge.properties,
-        })
+        grouped[edge_type]["properties"].append(
+            {
+                "edge_id": edge.edge_id,
+                **edge.properties,
+            }
+        )
 
     result = {}
     for edge_type, values in grouped.items():

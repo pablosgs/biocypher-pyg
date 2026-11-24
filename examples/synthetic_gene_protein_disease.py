@@ -7,12 +7,20 @@ nodes = [
 ]
 edges = [
     EdgeRecord(
-        "HGNC:11998", "UniProt:P04637", "gene", "protein", "encodes",
-        {"source": "synthetic", "evidence": "curated"}
+        "HGNC:11998",
+        "UniProt:P04637",
+        "gene",
+        "protein",
+        "encodes",
+        {"source": "synthetic", "evidence": "curated"},
     ),
     EdgeRecord(
-        "UniProt:P04637", "MONDO:0007254", "protein", "disease",
-        "associated_with", {"score": 0.95}
+        "UniProt:P04637",
+        "MONDO:0007254",
+        "protein",
+        "disease",
+        "associated_with",
+        {"score": 0.95},
     ),
 ]
 
