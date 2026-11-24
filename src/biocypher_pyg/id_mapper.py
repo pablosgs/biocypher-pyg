@@ -8,18 +8,38 @@ class NodeIdMapper:
         self._id_to_index: dict[str, dict[str, int]] = {}
         self._index_to_id: dict[str, list[str]] = {}
 
-    def build(self, nodes) -> "NodeIdMapper":
-        grouped: dict[str, set[str]] = {}
+    def build(self, nodes) -> NodeIdMapper:
+        """Assign deterministic per-type indices to node identifiers.
+
+        Identifiers must be unique across the whole graph, as in BioCypher,
+        where node IDs are graph-wide (typically CURIEs). Within each node
+        type, indices follow the lexicographic order of the identifiers.
+
+        Args:
+            nodes: Iterable of ``NodeRecord`` objects with normalized types.
+
+        Returns:
+            This mapper, populated.
+
+        Raises:
+            ValueError: If an identifier occurs more than once, either under
+                the same node type or under different node types.
+        """
+        grouped: dict[str, list[str]] = {}
         seen_types: dict[str, str] = {}
         for node in nodes:
             previous = seen_types.get(node.node_id)
-            if previous is not None and previous != node.node_type:
+            if previous == node.node_type:
+                raise ValueError(
+                    f"Duplicate ID {node.node_id!r} for node type {previous!r}"
+                )
+            if previous is not None:
                 raise ValueError(
                     f"ID {node.node_id!r} appears as both {previous!r} "
                     f"and {node.node_type!r}"
                 )
             seen_types[node.node_id] = node.node_type
-            grouped.setdefault(node.node_type, set()).add(node.node_id)
+            grouped.setdefault(node.node_type, []).append(node.node_id)
 
         for node_type, ids in grouped.items():
             ordered = sorted(ids)
@@ -53,7 +73,7 @@ class NodeIdMapper:
         return {key: list(value) for key, value in self._index_to_id.items()}
 
     @classmethod
-    def from_dict(cls, mapping: dict[str, list[str]]) -> "NodeIdMapper":
+    def from_dict(cls, mapping: dict[str, list[str]]) -> NodeIdMapper:
         mapper = cls()
         for node_type, ids in mapping.items():
             if len(ids) != len(set(ids)):
